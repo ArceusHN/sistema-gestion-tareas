@@ -8,6 +8,8 @@ import { User } from 'src/domain/entities/user.entity';
 import { LoginRequestDto } from 'src/application/dtos/auth/login-request.dto';
 import { LoginResponseDto } from 'src/application/dtos/auth/login-response.dto';
 import { HttpStatusCodes } from 'src/shared/helpers/http-status-codes';
+import { StringUtils } from 'src/shared/helpers/string-utils';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -15,11 +17,13 @@ export class AuthService implements IAuthService {
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
     private readonly passwordHashingService: PasswordHashingService,
     private readonly jwtTokenService: JwtTokenService,
+    private readonly configService: ConfigService,
   ) {}
 
   async logIn(loginRequest: LoginRequestDto): Promise<Result<LoginResponseDto>>{
 
-    const userNameOrPasswordIsMissing = !loginRequest.username || !loginRequest.password
+    const userNameOrPasswordIsMissing = StringUtils.isNullOrWhiteSpace(loginRequest.username) ||
+                                        StringUtils.isNullOrWhiteSpace(loginRequest.password)
 
     if(userNameOrPasswordIsMissing){
       return Result.fail('El usuario y la contraseña son requeridos.', HttpStatusCodes.BAD_REQUEST);
@@ -31,9 +35,11 @@ export class AuthService implements IAuthService {
       return Result.fail(validateUserResult.error, validateUserResult.statusCode);
     }
 
-    const userToken = await this.generateUserJWT(validateUserResult.getValue());
+    const userData = validateUserResult.getValue();
 
-    return Result.ok(new LoginResponseDto(userToken.access_token));
+    const userToken = await this.generateUserJWT(userData);
+
+    return Result.ok(new LoginResponseDto(userToken.access_token, userData.username, userData.role, userToken.expiresAt));
   } 
 
   async validateUserCredentials(username: string, password: string): Promise<Result<User>> {
@@ -54,10 +60,15 @@ export class AuthService implements IAuthService {
     return Result.ok(user);
   }
 
-  async generateUserJWT(user: User): Promise<{ access_token: string }> {
+  async generateUserJWT(user: User): Promise<{ access_token: string; expiresAt: Date }> {
     const payload = { username: user.username, sub: user.id, role: user.role };
+
+    const expiresIn = this.configService.get<number>('JWT_EXPIRATION_SECONDS') || 3600;
+
     const token = await this.jwtTokenService.generateToken(payload);
 
-    return { access_token: token };
+    const expiresAt = new Date(Date.now() + expiresIn * 1000);
+    
+    return { access_token: token, expiresAt };
   }
 }

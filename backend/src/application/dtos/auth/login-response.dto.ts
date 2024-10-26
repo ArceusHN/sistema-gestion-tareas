@@ -1,10 +1,16 @@
+import { Role } from "src/domain/entities/role.entity";
+
 export class LoginResponseDto {
     accessToken: string;
-    expiresIn: number; 
+    userName: string;
+    role: Role;
+    expiresAt: Date; 
   
-    constructor(accessToken: string, expiresIn?: number) {
+    constructor(accessToken: string, userName: string, role: Role, expiresAt: Date) {
       this.accessToken = accessToken;
-      if (expiresIn) this.expiresIn = expiresIn;
+      this.userName = userName;
+      this.role = role;
+      this.expiresAt = expiresAt;
     }
   }
   
