@@ -1,11 +1,10 @@
-import { Controller, Post, Body, Inject, UnauthorizedException } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Post, Body, Inject, Res } from '@nestjs/common';
+import { Response } from 'express';
+import { LoginRequestDto } from 'src/application/dtos/auth/login-request.dto';
 import { IAuthService } from 'src/application/interfaces/auth-service.interface';
 import { AUTH_SERVICE } from 'src/application/interfaces/auth-service.interface';
-import { User } from 'src/domain/entities/user.entity';
-import { Result } from 'src/shared/results/result';
+import { HttpStatusCodes } from 'src/shared/results/http-status-codes';
 
-@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -13,16 +12,17 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  @ApiOperation({ summary: 'Crear una nueva tarea' })
-  @ApiBody({ schema: { example: { username: 'UserName', password: 'Password'} } })
-  async login(@Body('username') username: string, @Body('password') password: string) {
+  async login(@Body() loginRequestDto: LoginRequestDto, @Res() res: Response): Promise<void> {
+    const validateUserResult = await this.authService.logIn(loginRequestDto);
 
-    const validateUserResult: Result<User> = await this.authService.validateUser(username, password);
+    if (!validateUserResult.ok) {
+      res.status(validateUserResult.statusCode).json({
+        message: validateUserResult.error,
+      });
 
-    if (!validateUserResult.isSuccess) {
-      throw new UnauthorizedException(validateUserResult.error);
+      return;
     }
-    
-    return this.authService.generateJWT(validateUserResult.getValue());
+
+    res.status(HttpStatusCodes.OK).json(validateUserResult.getValue());
   }
 }

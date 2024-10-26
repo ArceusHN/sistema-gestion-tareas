@@ -5,6 +5,9 @@ import { PasswordHashingService } from './password-hashing.service';
 import { JwtTokenService } from './jwt-token.service';
 import { Result } from 'src/shared/results/result';
 import { User } from 'src/domain/entities/user.entity';
+import { LoginRequestDto } from 'src/application/dtos/auth/login-request.dto';
+import { LoginResponseDto } from 'src/application/dtos/auth/login-response.dto';
+import { HttpStatusCodes } from 'src/shared/results/http-status-codes';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -14,10 +17,30 @@ export class AuthService implements IAuthService {
     private readonly jwtTokenService: JwtTokenService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<Result<User>> {
+  async logIn(loginRequest: LoginRequestDto): Promise<Result<LoginResponseDto>>{
+
+    const userNameOrPasswordIsMissing = !loginRequest.username || !loginRequest.password
+
+    if(userNameOrPasswordIsMissing){
+      return Result.fail('El usuario y la contraseña son requeridos.', HttpStatusCodes.BAD_REQUEST);
+    }
+
+    const validateUserResult: Result<User> = await this.validateUserCredentials(loginRequest.username, loginRequest.password);
+
+    if(!validateUserResult.ok){
+      return Result.fail(validateUserResult.error, validateUserResult.statusCode);
+    }
+
+    const userToken = await this.generateUserJWT(validateUserResult.getValue());
+
+    return Result.ok(new LoginResponseDto(userToken.access_token));
+  } 
+
+  async validateUserCredentials(username: string, password: string): Promise<Result<User>> {
     const user = await this.userRepository.findByUsername(username);
+
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      return Result.fail('El usuario y/o contraseña son inválidos.', HttpStatusCodes.NOT_FOUND);
     }
 
     const isPasswordValid = user.isPasswordEncrypted
@@ -25,13 +48,13 @@ export class AuthService implements IAuthService {
       : user.password === password;
 
     if (!isPasswordValid) {
-      return Result.fail('Crendenciales invalidas');
+      return Result.fail('El usuario y/o contraseña son inválidos.', HttpStatusCodes.UNAUTHORIZED);
     }
 
     return Result.ok(user);
   }
 
-  async generateJWT(user: User): Promise<{ access_token: string }> {
+  async generateUserJWT(user: User): Promise<{ access_token: string }> {
     const payload = { username: user.username, sub: user.id, role: user.role };
     const token = await this.jwtTokenService.generateToken(payload);
 
