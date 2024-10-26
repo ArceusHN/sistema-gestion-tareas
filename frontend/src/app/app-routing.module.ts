@@ -7,6 +7,7 @@ import { HomeComponent } from './features/home/home.component';
 import { AuthGuardService } from './core/guards/auth-guard.service';
 import { ForbiddenComponent } from './shared/components/forbidden/forbidden.component';
 import { RoleGuardService } from './core/guards/role-guard.service';
+import { NoAuthGuardService } from './core/guards/no-auth-guard.service';
 
 
 const routes: Routes = [
@@ -14,7 +15,10 @@ const routes: Routes = [
     path: '',
     component: UnauthenticatedContentComponent,
     children: [
-      {path: 'auth', loadChildren: () => import('../app/features/auth/auth.module').then(m => m.AuthModule)}
+      { path: 'auth', 
+        loadChildren: () => import('../app/features/auth/auth.module').then(m => m.AuthModule), 
+        canActivate: [NoAuthGuardService]
+      }
     ]
   },
   {
@@ -44,7 +48,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes, { useHash: true, }),
     BrowserModule,
   ],
-  providers: [AuthGuardService, RoleGuardService],
+  providers: [AuthGuardService, RoleGuardService, NoAuthGuardService],
   exports: [RouterModule],
   declarations: [],
 })

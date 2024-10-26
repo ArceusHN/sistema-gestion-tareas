@@ -23,6 +23,10 @@ export class LocalStoreService {
     }
   }
 
+  public remoteItem(key){
+    this.ls.removeItem(key);
+  }
+
   public clear() {
     this.ls.clear();
   }

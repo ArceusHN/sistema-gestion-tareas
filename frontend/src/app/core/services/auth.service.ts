@@ -23,14 +23,12 @@ const defaultPath = '/';
   providedIn: 'root'
 })
 export class AuthService {
-  signingIn: boolean;
-  isAuthenticated: boolean;
   token: any;
   user: any = {};
   apiUrl: string = 'http://localhost:3000';
 
   get loggedIn(): boolean {
-    return this.signingIn;
+    return this.isAuthenticated();
   }
 
   constructor(private router: Router,
@@ -43,14 +41,10 @@ export class AuthService {
       return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials).pipe(
         map((data) => {
 
-          this.signingIn = false;
-
           if (!data) {
             throw Error('Ocurrió un error al iniciar sesión. Intente nuevamente.');
           }
           
-          this.signingIn = true;
-
           const { accessToken, expiresAt, userName, role  } = data;
 
           this.setUserAndToken({accessToken, expiresAt}, { userName, role });
@@ -69,6 +63,11 @@ export class AuthService {
     this.localStore.setItem('APP_USER', user);
   }
 
+  private removeUserAndToken(){
+    this.localStore.remoteItem('JWT_TOKEN');
+    this.localStore.remoteItem('APP_USER');
+  }
+
   getJwtToken() {
     return this.localStore.getItem('JWT_TOKEN');
   }
@@ -77,11 +76,8 @@ export class AuthService {
     return this.localStore.getItem('APP_USER');
   }
 
-  public logout() {
-    return new Promise<void>((resolve) => {
-      this.setUserAndToken(null, null);
-      resolve();
-    });
+  isAuthenticated(): boolean{
+    return (this.getJwtToken() instanceof Object && this.getUserInfo() instanceof Object);
   }
 
   async createAccount(email: string, password: string) {
@@ -101,6 +97,10 @@ export class AuthService {
   }
 
   async logOut() {
-    this.router.navigate(['/auth/login']);
+    return new Promise<void>((resolve) => {
+      this.removeUserAndToken();
+      this.router.navigate(['/auth/login']);
+      resolve();
+    });
   }
 }
