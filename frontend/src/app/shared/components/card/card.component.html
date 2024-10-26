@@ -1,0 +1,29 @@
+<div class="card">
+  <div class="card-header primary">
+    <dx-toolbar class="toolbar-details">
+      <dxi-item location="before">
+        <dx-button icon="arrowleft" stylingMode="text" class="ReturnButton" *ngIf="IsReturnable"
+          (click)="onReturn()"></dx-button>
+      </dxi-item>
+      <dxi-item location="before">
+        <h3>{{CardTitle}}</h3>
+      </dxi-item>
+
+
+      <dxi-item location="after" locateInMenu="auto">
+        <div class="separator"></div>
+      </dxi-item>
+
+    </dx-toolbar>
+
+    <dx-button class="close-btn" icon="close" *ngIf="IsClosable" (click)="onClose()">
+
+    </dx-button>
+  </div>
+  <div class="card-body">
+    <ng-content select="[card-body]"></ng-content>
+  </div>
+  <div class="card-footer">
+    <ng-content select="[card-footer]"></ng-content>
+  </div>
+</div>

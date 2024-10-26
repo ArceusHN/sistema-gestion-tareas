@@ -1,0 +1,96 @@
+@import '../../../ui/theme/styles/variables.additional.scss';
+.card {
+  background-color: #ffffff;
+  padding: 0px; /* Eliminamos el padding para que el header esté ajustado */
+  border-radius: 4px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  margin: 25px 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 2px 0px 2px;
+  // background-color: $base-header-card; /* Color gris claro para el header */
+
+  box-shadow: inset 0px -1px 0px rgba(0, 0, 0, 0.1); /* Sombra interna sutil debajo del header */
+  .toolbar-details{
+    background-color: transparent;
+    margin: 0px;
+  }
+  
+  .toolbar-details > dx-button{
+    background-color: transparent;
+    margin: 0px;
+  }
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #5c7a94;
+  }
+ .close-btn{
+    border:none;
+    background-color:transparent;
+    margin-left: 0px;
+    margin-bottom: 2px;
+  }
+  ::ng-deep .close-btn .dx-icon-close {
+    font-size: 20px; /* Tamaño del icono */
+    // color: #ffffff; /* Color inicial */
+    transition: color 0.3s ease; /* Transición suave */
+    // background-color: transparent;
+    border-radius: 5px;
+  }
+  ::ng-deep .close-btn {
+    font-size: 20px; /* Tamaño del icono */
+    transition: color 0.3s ease; /* Transición suave */
+    background-color: transparent;
+    border-radius: 5px;
+  }
+
+  ::ng-deep .close-btn:hover .dx-icon-close {
+    color: #000000; /* Cambiar color en hover */
+  }
+  ::ng-deep .ReturnButton:hover .dx-icon-arrowleft {
+    color: #000000; /* Cambiar color en hover */
+  }
+  ::ng-deep .close-btn:hover {
+    background-color: #ffe3b7;
+  }
+  ::ng-deep .ReturnButton:hover  {
+    background-color: #e0e0e0;
+  }
+
+  /* Línea sutil al final del header */
+  &::after {
+    content: '';
+    bottom: 0;
+    left: 15px; /* Espacio a la izquierda */
+    right: 15px; /* Espacio a la derecha */
+    height: 1px;
+    background-color: #c68926; /* Color gris sutil */
+  }
+}
+
+.card-body {
+  padding: 15px;
+  background-color: #ffffff9a;
+}
+
+.card-footer {
+  background-color: #f5f5f5; /* Color gris suave */
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 15px;
+  text-align: right;
+  box-shadow: inset 0px 1px 0px rgba(0, 0, 0, 0.1); /* Sombra interna sutil */
+}
+
+.scrollable-div {
+  width: 100%;
+  white-space: nowrap;
+  overflow-x: auto;
+}
