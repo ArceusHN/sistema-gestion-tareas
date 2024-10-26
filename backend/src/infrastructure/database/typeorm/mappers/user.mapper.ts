@@ -10,7 +10,7 @@ export class UserMapper {
       entity.username,
       entity.password,
       entity.isPasswordEncrypted,
-      RoleMapper.toDomain(entity.role),
+      entity.role ? RoleMapper.toDomain(entity.role) : undefined,
       entity.createdAt,
       entity.updatedAt,
       entity.createdBy ? this.toDomain(entity.createdBy) : undefined,

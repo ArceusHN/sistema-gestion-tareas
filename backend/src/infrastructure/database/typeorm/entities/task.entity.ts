@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { TaskStatus } from 'src/domain/entities/task.entity';
 
 @Entity('tasks')
 export class TaskEntity {
@@ -13,14 +12,10 @@ export class TaskEntity {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({
-    type: 'enum',
-    enum: TaskStatus,
-    default: TaskStatus.PENDING,
-  })
-  status: TaskStatus;
+  @Column({ name: 'status_id' })
+  status: number; 
 
-  @ManyToOne(() => UserEntity, (user) => user.tasks)
+  @ManyToOne(() => UserEntity, (user) => user.tasks, { eager: false })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 

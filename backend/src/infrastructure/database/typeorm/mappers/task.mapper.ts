@@ -9,7 +9,7 @@ export class TaskMapper {
       entity.title,
       entity.description,
       entity.status,
-      UserMapper.toDomain(entity.user),
+      entity.user ? UserMapper.toDomain(entity.user) : undefined,
       entity.createdById,
       entity.createdById,
       entity.createdAt,

@@ -14,11 +14,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PasswordHashingService } from './auth/password-hashing.service';
 import { JwtTokenService } from './auth/jwt-token.service';
+import { TASK_STATUS_REPOSITORY } from 'src/domain/repositories/task-status-repository.interface';
+import { TaskStatusRepository } from './database/typeorm/repositories/TaskStatusRepository';
+import { TaskStatusEntity } from './database/typeorm/entities/task-status.entity';
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([TaskEntity, RoleEntity, UserEntity]),
+    TypeOrmModule.forFeature([TaskEntity, RoleEntity, UserEntity, TaskStatusEntity]),
     forwardRef(() => ApplicationModule),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -42,9 +45,13 @@ import { JwtTokenService } from './auth/jwt-token.service';
         provide: AUTH_SERVICE,
         useClass: AuthService
     },
+    {
+      provide: TASK_STATUS_REPOSITORY,
+      useClass: TaskStatusRepository
+    },
     PasswordHashingService,
     JwtTokenService
   ],
-  exports: [TASK_REPOSITORY, USER_REPOSITORY, AUTH_SERVICE],
+  exports: [TASK_REPOSITORY, USER_REPOSITORY, AUTH_SERVICE, TASK_STATUS_REPOSITORY],
 })
 export class InfrastructureModule {}

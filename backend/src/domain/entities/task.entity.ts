@@ -5,7 +5,7 @@ export class Task {
       public id: number,
       public title: string,
       public description: string,
-      public status: TaskStatus = TaskStatus.PENDING,
+      public status: number = Number(TaskStatusEnum.PENDING),
       public user: User,
       public createdBy?: number,
       public updatedBy?: number,
@@ -16,9 +16,9 @@ export class Task {
   
   }
   
-  export enum TaskStatus {
-    PENDING = 'pending',
-    IN_PROGRESS = 'in-progress',
-    COMPLETED = 'completed'
+  export enum TaskStatusEnum {
+    PENDING = 1,
+    IN_PROGRESS,
+    COMPLETED
   }
   

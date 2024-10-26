@@ -7,6 +7,7 @@ import { RolesGuard } from './guards/roles.guard';
 import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { TaskStatusController } from './controllers/task-status.controller';
 
 @Module({
     imports: [
@@ -14,7 +15,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         forwardRef(() => InfrastructureModule),
         forwardRef(() => ApplicationModule)
     ],
-    controllers: [TaskController, AuthController],
+    controllers: [TaskController, AuthController, TaskStatusController],
     providers: [JwtAuthGuard, RolesGuard, JwtStrategy],
 })
 export class PresentationModule {}

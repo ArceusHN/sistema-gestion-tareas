@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TaskEntity } from '../entities/task.entity';
 import { ITaskRepository } from 'src/domain/repositories/task-repository.interface';
-import { Task, TaskStatus } from 'src/domain/entities/task.entity';
+import { Task } from 'src/domain/entities/task.entity';
 import { TaskMapper } from '../mappers/task.mapper';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class TaskRepository implements ITaskRepository {
   }
 
   async findByUserId(userId: number): Promise<Task[]> {
-    const taskEntities = await this.taskRepo.find({ where: { user: { id: userId } } });
+    const taskEntities = await this.taskRepo.find({ where: { user: { id: userId } }, relations: ['user'] });
     return taskEntities.map(TaskMapper.toDomain);
   }
 
@@ -29,7 +29,7 @@ export class TaskRepository implements ITaskRepository {
     return TaskMapper.toDomain(savedEntity);
   }
 
-  async updateStatus(taskId: number, status: TaskStatus, updatedById: number): Promise<void> {
+  async updateStatus(taskId: number, status: number, updatedById: number): Promise<void> {
     await this.taskRepo.update(taskId, { status, updatedById });
   }
 
