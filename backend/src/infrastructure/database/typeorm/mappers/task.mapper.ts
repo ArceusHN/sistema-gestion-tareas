@@ -10,10 +10,10 @@ export class TaskMapper {
       entity.description,
       entity.status,
       UserMapper.toDomain(entity.user),
+      entity.createdById,
+      entity.createdById,
       entity.createdAt,
       entity.updatedAt,
-      entity.createdBy ? UserMapper.toDomain(entity.createdBy) : undefined,
-      entity.updatedBy ? UserMapper.toDomain(entity.updatedBy) : undefined,
     );
   }
 
@@ -26,8 +26,8 @@ export class TaskMapper {
     taskEntity.user = UserMapper.toEntity(domain.user);
     taskEntity.createdAt = domain.createdAt;
     taskEntity.updatedAt = domain.updatedAt;
-    taskEntity.createdBy = domain.createdBy ? UserMapper.toEntity(domain.createdBy) : undefined;
-    taskEntity.updatedBy = domain.updatedBy ? UserMapper.toEntity(domain.updatedBy) : undefined;
+    taskEntity.createdById = domain.createdBy;
+    taskEntity.createdById = domain.updatedBy;
     return taskEntity;
   }
 }

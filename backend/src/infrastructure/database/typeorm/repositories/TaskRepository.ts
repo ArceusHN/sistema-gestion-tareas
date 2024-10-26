@@ -29,11 +29,26 @@ export class TaskRepository implements ITaskRepository {
     return TaskMapper.toDomain(savedEntity);
   }
 
-  async updateStatus(taskId: number, status: TaskStatus): Promise<void> {
-    await this.taskRepo.update(taskId, { status });
+  async updateStatus(taskId: number, status: TaskStatus, updatedById: number): Promise<void> {
+    await this.taskRepo.update(taskId, { status, updatedById });
   }
 
   async delete(taskId: number): Promise<void> {
     await this.taskRepo.delete(taskId);
+  }
+
+  async update(task: Task): Promise<Task | null> {
+    const taskEntity = await this.taskRepo.findOne({ where: { id: task.id } });
+    if (!taskEntity) {
+      return null;
+    }
+
+    taskEntity.title = task.title;
+    taskEntity.description = task.description;
+    taskEntity.status = task.status;
+    taskEntity.updatedById = task.updatedBy;
+
+    const updatedEntity = await this.taskRepo.save(taskEntity);
+    return TaskMapper.toDomain(updatedEntity);
   }
 }

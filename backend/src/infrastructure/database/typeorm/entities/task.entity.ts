@@ -30,11 +30,9 @@ export class TaskEntity {
   @Column({ name: 'updated_at', type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @ManyToOne(() => UserEntity, { nullable: true })
-  @JoinColumn({ name: 'created_by' })
-  createdBy: UserEntity;
+  @Column({ name: 'created_by', type: 'int', nullable: true })
+  createdById: number;
 
-  @ManyToOne(() => UserEntity, { nullable: true })
-  @JoinColumn({ name: 'updated_by' })
-  updatedBy: UserEntity;
+  @Column({ name: 'updated_by', type: 'int', nullable: true })
+  updatedById: number;
 }

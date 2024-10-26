@@ -7,7 +7,7 @@ import { Result } from 'src/shared/results/result';
 import { User } from 'src/domain/entities/user.entity';
 import { LoginRequestDto } from 'src/application/dtos/auth/login-request.dto';
 import { LoginResponseDto } from 'src/application/dtos/auth/login-response.dto';
-import { HttpStatusCodes } from 'src/shared/results/http-status-codes';
+import { HttpStatusCodes } from 'src/shared/helpers/http-status-codes';
 
 @Injectable()
 export class AuthService implements IAuthService {

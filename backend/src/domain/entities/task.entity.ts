@@ -7,10 +7,11 @@ export class Task {
       public description: string,
       public status: TaskStatus = TaskStatus.PENDING,
       public user: User,
+      public createdBy?: number,
+      public updatedBy?: number,
       public createdAt: Date = new Date(),
       public updatedAt: Date = new Date(),
-      public createdBy?: User,
-      public updatedBy?: User
+     
     ) {}
   
   }

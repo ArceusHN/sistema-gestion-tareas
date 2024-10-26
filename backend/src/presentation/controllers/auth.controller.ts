@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { LoginRequestDto } from 'src/application/dtos/auth/login-request.dto';
 import { IAuthService } from 'src/application/interfaces/auth-service.interface';
 import { AUTH_SERVICE } from 'src/application/interfaces/auth-service.interface';
-import { HttpStatusCodes } from 'src/shared/results/http-status-codes';
+import { HttpStatusCodes } from 'src/shared/helpers/http-status-codes';
 
 @Controller('auth')
 export class AuthController {
@@ -13,6 +13,7 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() loginRequestDto: LoginRequestDto, @Res() res: Response): Promise<void> {
+    
     const validateUserResult = await this.authService.logIn(loginRequestDto);
 
     if (!validateUserResult.ok) {

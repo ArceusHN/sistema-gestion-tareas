@@ -5,7 +5,6 @@ import { TaskEntity } from './database/typeorm/entities/task.entity';
 import { RoleEntity } from './database/typeorm/entities/role.entity';
 import { UserEntity } from './database/typeorm/entities/user.entity';
 import { TaskRepository } from './database/typeorm/repositories/TaskRepository';
-import { TaskController } from '../presentation/controllers/task.controller';
 import { USER_REPOSITORY } from 'src/domain/repositories/user-repository.interface';
 import { UserRepository } from './database/typeorm/repositories/UserRepository';
 import { ApplicationModule } from 'src/application/application.module';
