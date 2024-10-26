@@ -1,5 +1,6 @@
 import { Component, NgModule, OnInit } from '@angular/core';
 import { DxButtonModule } from 'devextreme-angular';
+import { AuthService } from 'src/app/core/services';
 import { CardComponent } from 'src/app/shared/components/card/card.component';
 
 @Component({
@@ -10,10 +11,11 @@ import { CardComponent } from 'src/app/shared/components/card/card.component';
 export class HomeComponent implements OnInit {
   username: string;
 
-  constructor() {}
+  constructor(private authenticationService: AuthService) {}
 
   ngOnInit() {
-    this.username = "Desconocido";
+    const userInfo = this.authenticationService.getUserInfo();
+    this.username  = userInfo.userName;
   }
 }
 

@@ -1,9 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { LocalStoreService } from './local-store.service';
-import { environment } from 'src/environments/environment';
 import { catchError, map, throwError } from 'rxjs';
+import { LoginResponse } from '../models/login-response.model';
 
 export interface IUser {
   email: string;
@@ -19,21 +19,18 @@ export interface IResponse {
 
 const defaultPath = '/';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
   signingIn: boolean;
   isAuthenticated: boolean;
   token: any;
   user: any = {};
+  apiUrl: string = 'http://localhost:3000';
 
   get loggedIn(): boolean {
     return this.signingIn;
-  }
-
-  private _lastAuthenticatedPath: string = defaultPath;
-
-  set lastAuthenticatedPath(value: string) {
-    this._lastAuthenticatedPath = value;
   }
 
   constructor(private router: Router,
@@ -42,21 +39,21 @@ export class AuthService {
   ) { }
 
   async logIn(credentials: any) {
-      const headers = new HttpHeaders().set('Content-Type', 'application/json');
 
-      return this.http.post(`${environment.apiURL}/auth/login`, credentials, { headers, observe: 'response' }).pipe(
-        map((res: any) => {
+      return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials).pipe(
+        map((data) => {
 
-          debugger;
           this.signingIn = false;
-          if (!res.body.ok) {
-            throw Error(res.body.message);
+
+          if (!data) {
+            throw Error('Ocurrió un error al iniciar sesión. Intente nuevamente.');
           }
           
           this.signingIn = true;
-          const { id, token, username, roles, expiration } = res.body.data;
-          this.setUserAndToken({token, expiration, attempt: 0}, { id, username, roles }, !!res);
-          return res;
+
+          const { accessToken, expiresAt, userName, role  } = data;
+
+          this.setUserAndToken({accessToken, expiresAt}, { userName, role });
         }),
         catchError((error) => {
           return throwError(() => error);
@@ -64,9 +61,10 @@ export class AuthService {
       );
   }
 
-  private setUserAndToken(token: any, user: any, isAuthenticated: Boolean) {
+  private setUserAndToken(token: any, user: any) {
     this.token = token;
     this.user = user;
+
     this.localStore.setItem('JWT_TOKEN', token);
     this.localStore.setItem('APP_USER', user);
   }
@@ -80,11 +78,12 @@ export class AuthService {
   }
 
   public logout() {
-    return new Promise<void>((resolve, reject) => {
-      this.setUserAndToken(null, null, false);
+    return new Promise<void>((resolve) => {
+      this.setUserAndToken(null, null);
       resolve();
     });
   }
+
   async createAccount(email: string, password: string) {
     try {
       // Send request
@@ -103,30 +102,5 @@ export class AuthService {
 
   async logOut() {
     this.router.navigate(['/auth/login']);
-  }
-}
-
-@Injectable()
-export class AuthGuardService implements CanActivate {
-  constructor(private router: Router, private authService: AuthService) { }
-
-  canActivate(route: ActivatedRouteSnapshot): boolean {
-    const isLoggedIn = this.authService.loggedIn;
-    const isAuthForm = [
-      'login',
-      'reset-password',
-      'create-account',
-      'change-password/:recoveryCode',
-    ].includes(route.routeConfig?.path || defaultPath);
-
-    if (!isLoggedIn && isAuthForm) {
-      this.router.navigate(['/auth/login']);
-    }
-
-    if (isLoggedIn) {
-      this.authService.lastAuthenticatedPath = route.routeConfig?.path || defaultPath;
-    }
-
-    return isLoggedIn || isAuthForm;
   }
 }

@@ -15,10 +15,14 @@ import { ThemeService } from './core/services';
 import { HomeModule } from './features/home/home.component';
 import { NgModule } from '@angular/core';
 import { AuthModule } from './features/auth/auth.module';
+import { ForbiddenComponent } from './shared/components/forbidden/forbidden.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from './core/interceptors/token.interceptor';
 
 @NgModule({
   declarations: [
     AppComponent,
+    ForbiddenComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +35,13 @@ import { AuthModule } from './features/auth/auth.module';
     HomeModule,
     AuthModule
   ],
-  providers: [AuthService, ScreenService, AppInfoService, ThemeService],
+  providers: [AuthService, ScreenService, AppInfoService, ThemeService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

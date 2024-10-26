@@ -30,7 +30,7 @@ export class LoginComponent {
 
   async onSubmit(e: Event) {
     e.preventDefault();
-    
+
     const { username, password } = this.formData;
     this.loading = true;
 

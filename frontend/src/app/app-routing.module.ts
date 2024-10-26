@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
-import { AuthGuardService } from './core/services';
 
 import { SideNavOuterToolbarComponent, UnauthenticatedContentComponent } from './ui/layouts';
 import { HomeComponent } from './features/home/home.component';
+import { AuthGuardService } from './core/guards/auth-guard.service';
+import { ForbiddenComponent } from './shared/components/forbidden/forbidden.component';
+import { RoleGuardService } from './core/guards/role-guard.service';
 
 
 const routes: Routes = [
@@ -25,6 +27,10 @@ const routes: Routes = [
         canActivate: [AuthGuardService],
       },
       {
+        path: 'forbidden',
+        component: ForbiddenComponent,
+      },
+      {
         path: '**',
         redirectTo: 'home',
         pathMatch: 'full',
@@ -38,7 +44,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes, { useHash: true, }),
     BrowserModule,
   ],
-  providers: [AuthGuardService],
+  providers: [AuthGuardService, RoleGuardService],
   exports: [RouterModule],
   declarations: [],
 })

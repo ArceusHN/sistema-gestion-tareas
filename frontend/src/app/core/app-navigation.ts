@@ -1,16 +1,18 @@
 export const navigation = [
   {
-    text: 'Prueba',
-    icon: 'user',
+    text: 'Tareas',
+    icon: 'taskcomplete',
     path: '',
     items: [
       {
-        text: 'Contact List',
+        text: 'Gestionar Tareas',
         path: '/crm-contact-list',
+        roles: [1]
       },
       {
-        text: 'Contact Details',
+        text: 'Mis tareas',
         path: '/crm-contact-details',
+        roles: [2]
       },
     ],
   },
