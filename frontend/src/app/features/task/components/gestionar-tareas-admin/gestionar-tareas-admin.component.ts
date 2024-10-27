@@ -27,7 +27,8 @@ export class GestionarTareasAdminComponent implements OnInit{
     taskStatusList: TaskStatusModel[];
     userList: User[];
     taskDataSource: TaskModel[];
-    
+    isWordWrapEnabled: boolean = false; 
+
     exportToXLSXButtonOptions = {
         text: 'Exportar a Excel',
         icon: 'exportxlsx',
@@ -197,5 +198,4 @@ export class GestionarTareasAdminComponent implements OnInit{
           });
         });
     }
-      
 }

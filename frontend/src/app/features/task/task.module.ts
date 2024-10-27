@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
-import { DxFormModule, DxLoadIndicatorModule, DxButtonModule, DxDataGridModule, DxDropDownButtonModule, DxSelectBoxModule, DxTextBoxModule, DxToolbarModule, DxTabsModule, DxPopupModule, DxValidatorModule, DxTextAreaModule } from "devextreme-angular";
+import { DxFormModule, DxLoadIndicatorModule, DxButtonModule, DxDataGridModule, DxDropDownButtonModule, DxSelectBoxModule, DxTextBoxModule, DxToolbarModule, DxTabsModule, DxPopupModule, DxValidatorModule, DxTextAreaModule, DxCheckBoxModule } from "devextreme-angular";
 import { LoginOauthModule } from "src/app/ui/components/library/login-oauth/login-oauth.component";
 import { GestionarTareasAdminComponent } from "./components/gestionar-tareas-admin/gestionar-tareas-admin.component";
 import { MisTareasComponent } from "./components/mis-tareas/mis-tareas-admin.component";
@@ -35,7 +35,8 @@ import { TaskAddPopupComponent } from "./components/gestionar-tareas-admin/task-
         DxTabsModule,
         DxPopupModule,
         DxValidatorModule,
-        DxTextAreaModule
+        DxTextAreaModule,
+        DxCheckBoxModule
     ],
     exports: [
         GestionarTareasAdminComponent,

@@ -12,6 +12,13 @@
                             <div class="col-md-12">
                                 <dx-toolbar class="theme-dependent">
                                 
+                                  <dxi-item location="before" locateInMenu="auto">
+                                    <dx-check-box
+                                      text="Ajustar"
+                                      [(value)]="isWordWrapEnabled"
+                                    ></dx-check-box>
+                                  </dxi-item>
+
                                     <dxi-item location="after" locateInMenu="auto">
                                       <dx-button
                                         icon="plus"
@@ -67,12 +74,15 @@
                                         height="100%"
                                         [dataSource]="taskDataSource"
                                         [hoverStateEnabled]="true"
-                                        [columnAutoWidth]="true"
                                         [showBorders]="true"
                                         [editing]="editingOptions"
                                         (onRowUpdating)="onRowUpdating($event)"
                                         (onRowRemoving)="onRowRemoving($event)"
                                         keyExpr="id"
+                                        [columnHidingEnabled]="true"
+                                        [wordWrapEnabled]="isWordWrapEnabled"
+                                        [allowColumnResizing]="true"
+                                        [columnResizingMode]="'widget'"
                                         >
                                         <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
                                         <dxo-pager
@@ -85,15 +95,15 @@
                                         <dxo-sorting mode="multiple"></dxo-sorting>
                                         <dxo-header-filter [visible]="true"></dxo-header-filter>
 
-                                        <dxi-column [width]="90" dataField="id" caption="ID" [allowEditing]="false">
+                                        <dxi-column [hidingPriority]="0" [width]="90" dataField="id" caption="ID" [allowEditing]="false">
                                             <dxi-validation-rule type="required"></dxi-validation-rule>
                                         </dxi-column>
 
-                                        <dxi-column dataField="title" caption="Titulo">
+                                        <dxi-column [hidingPriority]="0" [width]="300" dataField="title" caption="Titulo">
                                             <dxi-validation-rule type="required"></dxi-validation-rule>
                                         </dxi-column>
 
-                                        <dxi-column dataField="description" caption="Descripción">
+                                        <dxi-column [minWidth]="300" dataField="description" caption="Descripción">
                                             <dxi-validation-rule type="required"></dxi-validation-rule>
                                         </dxi-column>
             
@@ -128,6 +138,7 @@
 
                                         <dxi-column 
                                             [width]="130" 
+                                            [hidingPriority]="2"
                                             dataField="user.id" 
                                             caption="Usuario Asignado">
                                             
@@ -141,7 +152,7 @@
                                         </dxi-column>
 
 
-                                        <dxi-column [width]="90" dataField="createdAt" [allowEditing]="false" caption="Creada" [format]="{ type: 'date', format: 'yyyy-MM-dd' }">                                            >
+                                        <dxi-column [width]="90" dataField="createdAt" [hidingPriority]="1" [allowEditing]="false" caption="Creada" [format]="{ type: 'date', format: 'yyyy-MM-dd' }">                                            >
                                             <dxi-validation-rule type="required"></dxi-validation-rule>
                                         </dxi-column>
                                 </dx-data-grid>
