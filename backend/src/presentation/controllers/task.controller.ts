@@ -58,15 +58,13 @@ export class TaskController {
     res.status(HttpStatus.OK).json({ message: 'Tarea actualizada exitosamente.' });
   }
 
-  @Put(':taskId/status')
+  @Put('status')
   async updateTaskStatus(
-    @Param('taskId') taskId: number,
     @Body() updateTaskStatusDto: UpdateStatusTaskRequestDto,
     @Request() req,
     @Res() res: Response,
   ): Promise<void> {
     const userId = req.user.userId;
-    updateTaskStatusDto.id = taskId;
 
     const result = await this.taskService.updateTaskStatus(updateTaskStatusDto, userId);
 
@@ -78,8 +76,13 @@ export class TaskController {
     res.status(HttpStatus.OK).json({ message: 'Estado de la tarea actualizado exitosamente.' });
   }
 
-  @Get('user/:userId')
-  async findByUserId(@Param('userId') userId: number, @Res() res: Response): Promise<void> {
+  @Get('user')
+  async findByUserId(    
+    @Request() req,
+    @Res() res: Response): Promise<void> {
+
+    const userId = req.user.userId;
+
     const result = await this.taskService.findByUserId(userId);
 
     if (!result.ok) {

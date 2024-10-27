@@ -26,7 +26,7 @@ export class TaskRepository implements ITaskRepository {
   }
 
   async findByUserId(userId: number): Promise<Task[]> {
-    const taskEntities = await this.taskRepo.find({ where: { user: { id: userId } }, relations: ['user'] });
+    const taskEntities = await this.taskRepo.find({ where: { user: { id: userId } }, order: { id: 'DESC' }, relations: ['user'] });
     return taskEntities.map(TaskMapper.toDomain);
   }
 

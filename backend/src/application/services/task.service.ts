@@ -139,5 +139,7 @@ export class TaskService implements ITaskService {
     if (!statusResult.ok) {
       return Result.fail(statusResult.error);
     }
+
+    return Result.ok();
   }
 }
