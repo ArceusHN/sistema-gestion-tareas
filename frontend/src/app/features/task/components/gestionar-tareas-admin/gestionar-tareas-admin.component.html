@@ -1,0 +1,170 @@
+<div class="app-content content">
+    <div class="content-wrapper">
+      <div class="content-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">
+                  <app-card [CardTitle]="'Gestionar Tareas'">
+                    <div card-body>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <dx-toolbar class="theme-dependent">
+                                
+                                    <dxi-item location="after" locateInMenu="auto">
+                                      <dx-button
+                                        icon="plus"
+                                        text="Crear tarea"
+                                        type="default"
+                                        stylingMode="contained"
+                                        (onClick)="addTask()"
+                                      ></dx-button>
+                                    </dxi-item>
+                                
+                                    <dxi-item
+                                      location="after"
+                                      locateInMenu="auto"
+                                      widget="dxButton"
+                                      showText="inMenu"
+                                      [options]="{
+                                        text: 'Refresh',
+                                        icon: 'refresh',
+                                        onClick: refresh,
+                                        stylingMode: 'text'
+                                      }"
+                                    ></dxi-item>
+                                
+                                    <dxi-item location="after" locateInMenu="auto">
+                                      <div class="separator"></div>
+                                    </dxi-item>
+
+                                    <dxi-item
+                                    location="after"
+                                    locateInMenu="auto"
+                                    widget="dxButton"
+                                    [options]="exportToXLSXButtonOptions"
+                                    ></dxi-item>
+                                
+                                    <dxi-item
+                                      location="after"
+                                      locateInMenu="auto"
+                                      widget="dxTextBox"
+                                      [options]="{
+                                        placeholder: 'Busqueda General',
+                                        mode: 'search',
+                                        onInput: searchDataGridInputHandler
+                                      }"
+                                    ></dxi-item>
+                                </dx-toolbar>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <dx-data-grid
+                                        #tasksgrid
+                                        height="100%"
+                                        [dataSource]="taskDataSource"
+                                        [hoverStateEnabled]="true"
+                                        [columnAutoWidth]="true"
+                                        [showBorders]="true"
+                                        [editing]="editingOptions"
+                                        keyExpr="id"
+                                        >
+                                        <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                                        <dxo-pager
+                                        [showPageSizeSelector]="true"
+                                        [allowedPageSizes]="[10,25,50,100]"
+                                        [showInfo]="true"
+                                        [visible]="true"
+                                        ></dxo-pager>      
+                                                                         
+                                        <dxo-sorting mode="multiple"></dxo-sorting>
+                                        <dxo-header-filter [visible]="true"></dxo-header-filter>
+
+                                        <dxi-column [width]="90" dataField="id" caption="ID" [allowEditing]="false">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-column>
+
+                                        <dxi-column dataField="title" caption="Titulo">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-column>
+
+                                        <dxi-column dataField="description" caption="Descripción">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-column>
+            
+                                        <dxi-column
+                                            dataField="status"
+                                            caption="Status"
+                                            [hidingPriority]="3"
+                                            [width]="115"
+                                            editCellTemplate="editCellStatus"
+                                        >
+                                            <dxo-lookup 
+                                                [dataSource]="taskStatusList" 
+                                                displayExpr="name" 
+                                                valueExpr="id">
+                                            </dxo-lookup>
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-column>
+
+                                        <!-- Template para la edición en celda -->
+                                        <div *dxTemplate="let cellInfo of 'editCellStatus'">
+                                            <dx-select-box
+                                                class="edit-cell"
+                                                [(value)]="cellInfo.value"
+                                                [dataSource]="taskStatusList"
+                                                displayExpr="name"
+                                                valueExpr="id"
+                                                (onValueChanged)="cellInfo.setValue($event.value)"
+                                                (onSelectionChanged)="cellInfo.component.updateDimensions()"
+                                            >
+                                            </dx-select-box>
+                                        </div>
+
+                                        <dxi-column 
+                                            [width]="130" 
+                                            dataField="user.id" 
+                                            caption="Usuario Asignado">
+                                            
+                                            <dxo-lookup 
+                                                [dataSource]="userList"       
+                                                valueExpr="id"            
+                                                displayExpr="username">
+                                            </dxo-lookup>
+                                            
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-column>
+
+
+                                        <dxi-column [width]="90" dataField="createdAt" [allowEditing]="false" caption="Creada" [format]="{ type: 'date', format: 'yyyy-MM-dd' }">                                            >
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-column>
+                                </dx-data-grid>
+                            </div>
+                        </div>
+
+                    </div>
+                  </app-card>
+                </h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-container *ngIf="isAddTaskPopupVisible">
+    <app-task-add-popup
+    [taskStatusList]="taskStatusList"
+    [userList]="userList"
+    [isVisible]="isAddTaskPopupVisible"
+    (saveTask)="onSaveTask($event)"
+    (cancel)="onCancel()"
+    ></app-task-add-popup>
+  </ng-container>
+
+  

@@ -16,6 +16,7 @@ export class RoleGuardService implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {    
+    
     const token = this.authService.getJwtToken();
     const user = this.authService.getUserInfo();
 

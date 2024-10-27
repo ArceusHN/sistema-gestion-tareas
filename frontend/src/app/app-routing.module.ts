@@ -13,18 +13,29 @@ import { NoAuthGuardService } from './core/guards/no-auth-guard.service';
 const routes: Routes = [
   {
     path: '',
+    redirectTo: 'home',
+    pathMatch: 'full',
+  },
+  {
+    path: '',
     component: UnauthenticatedContentComponent,
     children: [
-      { path: 'auth', 
+      { 
+        path: 'auth', 
         loadChildren: () => import('../app/features/auth/auth.module').then(m => m.AuthModule), 
         canActivate: [NoAuthGuardService]
-      }
+      },
     ]
   },
   {
     path: '',
     component: SideNavOuterToolbarComponent,
     children: [
+      { 
+        path: 'task', 
+        loadChildren: () => import('../app/features/task/task.module').then(m => m.TaskModule), 
+        canActivate: [AuthGuardService]
+      },
       {
         path: 'home',
         component: HomeComponent,
@@ -42,6 +53,7 @@ const routes: Routes = [
     ]
   },
 ];
+
 
 @NgModule({
   imports: [

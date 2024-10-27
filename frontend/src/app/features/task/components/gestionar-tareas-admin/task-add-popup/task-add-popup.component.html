@@ -1,0 +1,71 @@
+<dx-popup
+  [visible]="isVisible"
+  [showTitle]="true"
+  title="Registrar Nueva Tarea"
+  [width]="600"
+  [height]="'auto'"
+  (onHiding)="onCancel()"
+>
+  <div *dxTemplate="let data of 'content'" class="popup-content">
+    <!-- Título -->
+    <div class="form-group">
+      <dx-text-box [(value)]="newTaskData.title" placeholder="Título">
+        <dx-validator>
+          <dxi-validation-rule type="required" message="El título es obligatorio"></dxi-validation-rule>
+        </dx-validator>
+      </dx-text-box>
+    </div>
+
+    <!-- Descripción -->
+    <div class="form-group">
+      <dx-text-area [(value)]="newTaskData.description" placeholder="Descripción">
+        <dx-validator>
+          <dxi-validation-rule type="required" message="La descripción es obligatoria"></dxi-validation-rule>
+        </dx-validator>
+      </dx-text-area>
+    </div>
+
+    <!-- Estado -->
+    <div class="form-group">
+      <dx-select-box 
+        [(value)]="newTaskData.statusId" 
+        placeholder="Seleccione el estado" 
+        [dataSource]="taskStatusList" 
+        displayExpr="name" 
+        valueExpr="id">
+        <dx-validator>
+          <dxi-validation-rule type="required" message="El estado es obligatorio"></dxi-validation-rule>
+        </dx-validator>
+      </dx-select-box>
+    </div>
+
+    <!-- Usuario asignado -->
+    <div class="form-group">
+      <dx-select-box 
+        [(value)]="newTaskData.userId" 
+        placeholder="Usuario asignado" 
+        [dataSource]="userList" 
+        displayExpr="username" 
+        valueExpr="id">
+        <dx-validator>
+          <dxi-validation-rule type="required" message="Debe seleccionar un usuario"></dxi-validation-rule>
+        </dx-validator>
+      </dx-select-box>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="form-buttons">
+      <dx-button
+        text="Guardar"
+        type="success"
+        stylingMode="contained"
+        (onClick)="onSave()"
+      ></dx-button>
+      <dx-button
+        text="Cancelar"
+        stylingMode="outlined"
+        (onClick)="onCancel()"
+      ></dx-button>
+    </div>
+  </div>
+</dx-popup>

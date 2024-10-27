@@ -6,12 +6,12 @@ export const navigation = [
     items: [
       {
         text: 'Gestionar Tareas',
-        path: '/crm-contact-list',
+        path: '/task/gestionar-tareas',
         roles: [1]
       },
       {
         text: 'Mis tareas',
-        path: '/crm-contact-details',
+        path: '/task/mis-tareas',
         roles: [2]
       },
     ],

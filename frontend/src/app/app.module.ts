@@ -18,6 +18,7 @@ import { AuthModule } from './features/auth/auth.module';
 import { ForbiddenComponent } from './shared/components/forbidden/forbidden.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './core/interceptors/token.interceptor';
+import { TaskModule } from './features/task/task.module';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { TokenInterceptor } from './core/interceptors/token.interceptor';
     UnauthenticatedContentModule,
     AppRoutingModule,
     HomeModule,
-    AuthModule
+    AuthModule,
+    TaskModule
   ],
   providers: [AuthService, ScreenService, AppInfoService, ThemeService,
     {

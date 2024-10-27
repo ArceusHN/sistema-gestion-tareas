@@ -63,7 +63,7 @@ export class AuthService {
     this.localStore.setItem('APP_USER', user);
   }
 
-  private removeUserAndToken(){
+  public removeUserAndToken(){
     this.localStore.remoteItem('JWT_TOKEN');
     this.localStore.remoteItem('APP_USER');
   }
@@ -82,8 +82,6 @@ export class AuthService {
 
   async createAccount(email: string, password: string) {
     try {
-      // Send request
-
       this.router.navigate(['/auth/create-account']);
       return {
         isOk: true,
