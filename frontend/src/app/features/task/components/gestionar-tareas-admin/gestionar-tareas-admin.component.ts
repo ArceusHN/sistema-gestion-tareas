@@ -12,6 +12,7 @@ import { Workbook } from "exceljs";
 import { saveAs } from 'file-saver-es';
 import { CreateTaskModel } from "../../models/create-task.model";
 import notify from "devextreme/ui/notify";
+import { UpdateTaskModel } from "../../models/update-task.model";
 
 @Component({
     selector: 'app-gestionar-tareas-admin-component',
@@ -38,13 +39,17 @@ export class GestionarTareasAdminComponent implements OnInit{
         mode: 'row' as GridsEditMode,
         allowUpdating: true,
         allowAdding: false,
+        allowDeleting: true,
         texts: {
             saveRowChanges: "Guardar",
             cancelRowChanges: "Cancelar",
-            editRow: "Editar"
+            editRow: "Editar",
+            deleteRow: "Eliminar",
+            confirmDeleteMessage: "¿Estás seguro de que deseas eliminar esta tarea?",
+            confirmDeleteTitle: "Confirmación de eliminación"
         }
-      };
-
+    };
+    
     constructor(private readonly taskService: TaskService,
                 private readonly userService: UserService
     ){}
@@ -92,6 +97,10 @@ export class GestionarTareasAdminComponent implements OnInit{
         this.isAddTaskPopupVisible = true;
     };
     
+    onCancel() {
+        this.isAddTaskPopupVisible = false;
+    }
+
     onSaveTask(taskData: any) {
         this.isAddTaskPopupVisible = false;
 
@@ -103,20 +112,62 @@ export class GestionarTareasAdminComponent implements OnInit{
 
         this.taskService.create(createTask).subscribe({
             next: (data) =>{
-                notify(`${data.message ?? 'Tarea creada exitosamente'}`, 'success', 2000);
-                this.refresh();
+                notify(`${data?.message ?? 'Tarea creada exitosamente'}`, 'success', 2000);
+                this.refreshGridData();
             },
             error: (err) =>{
-                notify(`${err.error?.message ?? 'Ha ocurrido un error al crear la tarea'}` , 'error', 2000)
+                notify(`${err?.error?.message ?? 'Ha ocurrido un error al crear la tarea'}` , 'error', 2000)
             }
         });
     }
-
-    onCancel() {
-        this.isAddTaskPopupVisible = false;
+    
+    async onRowUpdating(event: any) {
+        const updatedData = { ...event.oldData, ...event.newData };
+        
+        const updateTask: UpdateTaskModel = new UpdateTaskModel();
+        updateTask.description = updatedData.description;
+        updateTask.id = updatedData.id;
+        updateTask.status = updatedData.status;
+        updateTask.title = updatedData.title;
+        updateTask.userAssignTaskId = updatedData?.user?.id;
+        
+        event.cancel = new Promise((resolve, reject) => {
+            this.taskService.update(updateTask).subscribe({
+            next: (data) => {
+                notify(`${data?.message ?? 'Tarea actualizada con éxito'}`, "success", 2000);
+                this.refreshGridData();
+                this.dataGrid.instance.cancelEditData();
+                resolve(true);
+            },
+            error: (err) => {
+                const errorMessage: string = err?.error?.message ?? "Error al actualizar la tarea";
+                notify(errorMessage, "error", 2000);
+                reject(false);
+            },
+            });
+        });
     }
 
-    refresh = () => {
+    async onRowRemoving(event: any) {
+        const taskId = event.data.id;
+
+        event.cancel = new Promise((resolve, reject) => {
+            this.taskService.delete(taskId).subscribe({
+                next: (data) => {
+                    notify(`${data?.message ?? 'Tarea eliminada con éxito'}`, "success", 2000);
+                    this.refreshGridData();
+                    resolve(true); 
+                },
+                error: (err) => {
+                    const errorMessage: string = err?.error?.message ?? "Error al eliminar la tarea";
+                    notify(errorMessage, "error", 2000);
+                    reject(false);
+                },
+            });
+        });
+    }
+      
+    refreshGridData = () => {
         this.getTasks();
     };
     

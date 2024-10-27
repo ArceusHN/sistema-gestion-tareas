@@ -4,6 +4,7 @@ import { TaskModel } from "../models/task.model";
 import { Observable } from "rxjs";
 import { TaskStatusModel } from "../models/task-status.model";
 import { CreateTaskModel } from "../models/create-task.model";
+import { UpdateTaskModel } from "../models/update-task.model";
 
 @Injectable({
     providedIn: 'root'
@@ -29,5 +30,17 @@ export class TaskService{
         const url = `${this.apiUrl}/tasks`;
 
         return this.httpClient.post(url, createTask);
+    }
+
+    update(updateTask: UpdateTaskModel): Observable<any>{
+        const url = `${this.apiUrl}/tasks`;
+
+        return this.httpClient.put(url, updateTask);
+    }
+
+    delete(taskId: number): Observable<any>{
+        const url = `${this.apiUrl}/tasks/${taskId}`;
+
+        return this.httpClient.delete(url);
     }
 }

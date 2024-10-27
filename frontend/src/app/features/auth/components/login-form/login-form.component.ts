@@ -40,7 +40,7 @@ export class LoginComponent {
         this.loading = false;
       },
       error: (err) =>{
-        notify(err.message, 'error', 2000);
+        notify(err?.error?.message ?? 'Ha ocurrido un error al iniciar sesión. Intente nuevamente.', 'error', 3000);
         this.loading = false;
       }
     });

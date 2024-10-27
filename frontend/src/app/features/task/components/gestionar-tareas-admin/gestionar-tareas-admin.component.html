@@ -30,7 +30,7 @@
                                       [options]="{
                                         text: 'Refresh',
                                         icon: 'refresh',
-                                        onClick: refresh,
+                                        onClick: refreshGridData,
                                         stylingMode: 'text'
                                       }"
                                     ></dxi-item>
@@ -70,6 +70,8 @@
                                         [columnAutoWidth]="true"
                                         [showBorders]="true"
                                         [editing]="editingOptions"
+                                        (onRowUpdating)="onRowUpdating($event)"
+                                        (onRowRemoving)="onRowRemoving($event)"
                                         keyExpr="id"
                                         >
                                         <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
