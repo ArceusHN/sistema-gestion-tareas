@@ -12,6 +12,13 @@ export class TaskRepository implements ITaskRepository {
     @InjectRepository(TaskEntity)
     private readonly taskRepo: Repository<TaskEntity>,
   ) {}
+  
+  async getAll(): Promise<Task[]> {
+    const taskEntities = await this.taskRepo.find({
+      order: { id: 'DESC' }, relations: ['user']
+    });
+    return taskEntities.map(TaskMapper.toDomain);
+  }
 
   async findById(id: number): Promise<Task | null> {
     const taskEntity = await this.taskRepo.findOne({ where: { id } });

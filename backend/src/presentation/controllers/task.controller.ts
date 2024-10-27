@@ -13,6 +13,17 @@ import { UpdateStatusTaskRequestDto } from 'src/application/dtos/task/update-sta
 export class TaskController {
   constructor(@Inject(TASK_SERVICE) private readonly taskService: ITaskService) {}
 
+
+  @Get('all')
+  async getAllTask(@Res() res: Response) {
+    const result = await this.taskService.getAllTask();
+
+    if (!result.ok) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: result.error });
+    }
+    return res.status(HttpStatus.OK).json(result.getValue());
+  }
+
   @Post()
   @Roles('Administrador')
   async createTask(@Body() createTaskDto: CreateTaskDto, @Request() req, @Res() res: Response): Promise<void> {

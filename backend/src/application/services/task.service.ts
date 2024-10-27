@@ -28,7 +28,12 @@ export class TaskService implements ITaskService {
       return Result.fail('No se encontró el usuario para asignar la tarea.', HttpStatusCodes.BAD_REQUEST);
     }
 
-    const newTask = new Task(0, createTaskDto.title, createTaskDto.description, Number(TaskStatusEnum.PENDING), userToAssignTask, userWhoCreateId);
+    const statusResult = TaskStatusHelper.convertStatus(createTaskDto.statusId);
+    if (!statusResult.ok) {
+      return Result.fail(statusResult.error);
+    }
+
+    const newTask = new Task(0, createTaskDto.title, createTaskDto.description, createTaskDto.statusId, userToAssignTask, userWhoCreateId);
 
     await this.taskRepository.save(newTask);
 
@@ -73,6 +78,12 @@ export class TaskService implements ITaskService {
 
   async findByUserId(userId: number): Promise<Result<Task[]>> {
     const tasks = await this.taskRepository.findByUserId(userId);
+
+    return Result.ok(tasks);
+  }
+
+  async getAllTask(): Promise<Result<Task[]>> {
+    const tasks = await this.taskRepository.getAll();
 
     return Result.ok(tasks);
   }
