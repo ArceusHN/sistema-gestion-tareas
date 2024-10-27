@@ -45,15 +45,18 @@ export class TaskRepository implements ITaskRepository {
   }
 
   async update(task: Task): Promise<Task | null> {
-    const taskEntity = await this.taskRepo.findOne({ where: { id: task.id } });
+    const tasktoUpdate = TaskMapper.toEntity(task);
+
+    const taskEntity = await this.taskRepo.findOne({ where: { id: task.id }, relations: ['user'] });
     if (!taskEntity) {
       return null;
     }
 
-    taskEntity.title = task.title;
-    taskEntity.description = task.description;
-    taskEntity.status = task.status;
-    taskEntity.updatedById = task.updatedBy;
+    taskEntity.title = tasktoUpdate.title;
+    taskEntity.description = tasktoUpdate.description;
+    taskEntity.status = tasktoUpdate.status;
+    taskEntity.updatedById = tasktoUpdate.updatedById;
+    taskEntity.user = tasktoUpdate.user;
 
     const updatedEntity = await this.taskRepo.save(taskEntity);
     return TaskMapper.toDomain(updatedEntity);

@@ -48,14 +48,23 @@ export class TaskService implements ITaskService {
     }
   
     const task = await this.taskRepository.findById(updateTask.id);
+    const userAssignTask = await this.userRepository.findById(updateTask.userAssignTaskId);
 
     if (!task) {
       return Result.fail('La tarea no fue encontrada. Por favor, intente nuevamente.', HttpStatusCodes.BAD_REQUEST);
+    }
+
+    if(!userAssignTask){
+      return Result.fail(
+        'El usuario asignado para esta tarea no fue encontrado. Por favor, verifica los datos e intenta nuevamente.',
+        HttpStatusCodes.BAD_REQUEST
+      );    
     }
   
     task.title = updateTask.title;
     task.description = updateTask.description;
     task.status = updateTask.status;
+    task.user = userAssignTask;
     task.updatedBy = userWhoModifyId;
   
     await this.taskRepository.update(task);
