@@ -24,6 +24,7 @@ export class UserMapper {
     userEntity.username = domain.username;
     userEntity.password = domain.password;
     userEntity.role = RoleMapper.toEntity(domain.role);
+    userEntity.isPasswordEncrypted = domain.isPasswordEncrypted;
     userEntity.createdAt = domain.createdAt;
     userEntity.updatedAt = domain.updatedAt;
     userEntity.createdBy = domain.createdBy ? this.toEntity(domain.createdBy) : undefined;

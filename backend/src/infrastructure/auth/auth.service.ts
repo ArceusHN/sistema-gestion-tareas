@@ -10,11 +10,13 @@ import { LoginResponseDto } from 'src/application/dtos/auth/login-response.dto';
 import { HttpStatusCodes } from 'src/shared/helpers/http-status-codes';
 import { StringUtils } from 'src/shared/helpers/string-utils';
 import { ConfigService } from '@nestjs/config';
+import { IRoleRepository, ROLE_REPOSITORY } from 'src/domain/repositories/role-repository.interface';
 
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
-    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository, 
+    @Inject(ROLE_REPOSITORY) private readonly roleRepository: IRoleRepository,
     private readonly passwordHashingService: PasswordHashingService,
     private readonly jwtTokenService: JwtTokenService,
     private readonly configService: ConfigService,
@@ -41,6 +43,32 @@ export class AuthService implements IAuthService {
 
     return Result.ok(new LoginResponseDto(userToken.access_token, userData.username, userData.role, userToken.expiresAt));
   } 
+
+  async registerIn(loginRequest: LoginRequestDto): Promise<Result<LoginResponseDto>>{
+    const userNameOrPasswordIsMissing = StringUtils.isNullOrWhiteSpace(loginRequest.username) ||
+                                        StringUtils.isNullOrWhiteSpace(loginRequest.password);
+  
+    if(userNameOrPasswordIsMissing){
+      return Result.fail('El usuario y la contraseña son requeridos.', HttpStatusCodes.BAD_REQUEST);
+    }
+  
+    const existingUser = await this.userRepository.findByUsername(loginRequest.username);
+    if (existingUser) {
+      return Result.fail('El nombre de usuario ya está en uso.', HttpStatusCodes.BAD_REQUEST);
+    }
+  
+    const createUserResult: Result<User> = await this.createUser(loginRequest);
+  
+    if(!createUserResult.ok){
+      return Result.fail(createUserResult.error, createUserResult.statusCode);
+    }
+  
+    const userData = createUserResult.getValue();
+  
+    const userToken = await this.generateUserJWT(userData);
+  
+    return Result.ok(new LoginResponseDto(userToken.access_token, userData.username, userData.role, userToken.expiresAt));
+  }
 
   async validateUserCredentials(username: string, password: string): Promise<Result<User>> {
     const user = await this.userRepository.findByUsername(username);
@@ -70,5 +98,33 @@ export class AuthService implements IAuthService {
     const expiresAt = new Date(Date.now() + expiresIn * 1000);
     
     return { access_token: token, expiresAt };
+  }
+
+  async createUser(loginRequest: LoginRequestDto): Promise<Result<User>>{
+    const USER_ROLE: number = 2;
+    let {username, password} = loginRequest;
+  
+    try {
+      password = await this.passwordHashingService.hashPassword(password);
+  
+      const rolePredefinido = await this.roleRepository.findById(USER_ROLE);
+      if (!rolePredefinido) {
+        return Result.fail('Error al asignar el rol de usuario. Inténtalo de nuevo más tarde.', HttpStatusCodes.NOT_FOUND);
+      }
+  
+      const userToCreate: User = new User(0, username, password, true, rolePredefinido);
+      const newUserCreated = await this.userRepository.save(userToCreate);
+  
+      if (!newUserCreated) {
+        return Result.fail('Error al registrar el usuario. Inténtalo de nuevo.', HttpStatusCodes.INTERNAL_SERVER_ERROR);
+      }
+  
+      return Result.ok(newUserCreated);
+    } catch (error) {
+
+      console.error('Error en createUser:', error);
+      return Result.fail('Error inesperado en el registro de usuario.', HttpStatusCodes.INTERNAL_SERVER_ERROR);
+
+    }
   }
 }

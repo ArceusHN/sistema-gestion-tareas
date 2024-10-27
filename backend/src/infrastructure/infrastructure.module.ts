@@ -17,6 +17,8 @@ import { JwtTokenService } from './auth/jwt-token.service';
 import { TASK_STATUS_REPOSITORY } from 'src/domain/repositories/task-status-repository.interface';
 import { TaskStatusRepository } from './database/typeorm/repositories/TaskStatusRepository';
 import { TaskStatusEntity } from './database/typeorm/entities/task-status.entity';
+import { RoleRepository } from './database/typeorm/repositories/RoleRepository';
+import { ROLE_REPOSITORY } from 'src/domain/repositories/role-repository.interface';
 
 @Module({
   imports: [
@@ -46,12 +48,16 @@ import { TaskStatusEntity } from './database/typeorm/entities/task-status.entity
         useClass: AuthService
     },
     {
+      provide: ROLE_REPOSITORY,
+      useClass: RoleRepository
+    },
+    {
       provide: TASK_STATUS_REPOSITORY,
       useClass: TaskStatusRepository
     },
     PasswordHashingService,
     JwtTokenService
   ],
-  exports: [TASK_REPOSITORY, USER_REPOSITORY, AUTH_SERVICE, TASK_STATUS_REPOSITORY],
+  exports: [TASK_REPOSITORY, USER_REPOSITORY, AUTH_SERVICE, TASK_STATUS_REPOSITORY, ROLE_REPOSITORY],
 })
 export class InfrastructureModule {}
