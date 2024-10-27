@@ -21,14 +21,21 @@ export class RegisterComponent {
 
   async onSubmit(e: Event) {
     e.preventDefault();
+
     const { username, password } = this.formData;
     this.loading = true;
 
-    // const result = await this.authService.logIn(username, password);
-    // this.loading = false;
-    // if (!result.isOk) {
-    //   notify(result.message, 'error', 2000);
-    // }
+    (await this.authService.registerIn({username, password})).subscribe({
+      next: () => {
+        this.router.navigate(['/home']);
+        this.loading = false;
+      },
+      error: (err) =>{
+        notify(err?.error?.message ?? 'Ha ocurrido un error al registrar la cuenta. Intente nuevamente.', 'error', 5000);
+        this.loading = false;
+      }
+    });
+    
   }
 
   onLogInClick = () => {

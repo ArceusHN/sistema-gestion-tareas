@@ -55,6 +55,25 @@ export class AuthService {
       );
   }
 
+  async registerIn(credentials: any) {
+
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/register`, credentials).pipe(
+      map((data) => {
+
+        if (!data) {
+          throw Error('Ocurrió un error al registrar la cuenta. Intente nuevamente.');
+        }
+        
+        const { accessToken, expiresAt, userName, role  } = data;
+
+        this.setUserAndToken({accessToken, expiresAt}, { userName, role });
+      }),
+      catchError((error) => {
+        return throwError(() => error);
+      }),
+    );
+}
+
   private setUserAndToken(token: any, user: any) {
     this.token = token;
     this.user = user;
