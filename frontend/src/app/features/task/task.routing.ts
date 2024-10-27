@@ -5,5 +5,5 @@ import { RoleGuardService } from "src/app/core/guards/role-guard.service";
 
 export const taskRoutes: Routes =[
     {path: 'gestionar-tareas', component: GestionarTareasAdminComponent, canActivate: [RoleGuardService],  data: { roles: [1] },},
-    {path: 'mis-tareas', component: MisTareasComponent, canActivate: [RoleGuardService],  data: { roles: [2] },}
+    {path: 'mis-tareas', component: MisTareasComponent, canActivate: [RoleGuardService],  data: { roles: [1,2] },}
 ]

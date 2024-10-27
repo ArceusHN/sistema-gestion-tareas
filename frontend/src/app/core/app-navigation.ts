@@ -12,7 +12,7 @@ export const navigation = [
       {
         text: 'Mis tareas',
         path: '/task/mis-tareas',
-        roles: [2]
+        roles: [1,2]
       },
     ],
   },
