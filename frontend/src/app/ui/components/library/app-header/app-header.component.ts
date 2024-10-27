@@ -30,7 +30,7 @@ export class AppHeaderComponent implements OnInit {
 
   userMenuItems = [
   {
-    text: 'Logout',
+    text: 'Cerrar sesión',
     icon: 'runner',
     onClick: () => {
       this.authService.logOut();
