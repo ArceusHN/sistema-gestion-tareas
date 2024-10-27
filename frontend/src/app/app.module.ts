@@ -19,6 +19,7 @@ import { ForbiddenComponent } from './shared/components/forbidden/forbidden.comp
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './core/interceptors/token.interceptor';
 import { TaskModule } from './features/task/task.module';
+import { DxButtonModule } from 'devextreme-angular';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { TaskModule } from './features/task/task.module';
     AppRoutingModule,
     HomeModule,
     AuthModule,
-    TaskModule
+    TaskModule,
+    DxButtonModule
   ],
   providers: [AuthService, ScreenService, AppInfoService, ThemeService,
     {
