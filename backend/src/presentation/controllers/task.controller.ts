@@ -39,16 +39,14 @@ export class TaskController {
     res.status(HttpStatus.CREATED).json({ message: 'Tarea creada exitosamente.' });
   }
 
-  @Put(':taskId')
+  @Put()
   @Roles('Administrador')
   async updateTask(
-    @Param('taskId') taskId: number,
     @Body() updateTaskDto: UpdateTaskRequestDto,
     @Request() req,
     @Res() res: Response,
   ): Promise<void> {
     const userId = req.user.userId;
-    updateTaskDto.id = taskId;
 
     const result = await this.taskService.updateTask(updateTaskDto, userId);
 
